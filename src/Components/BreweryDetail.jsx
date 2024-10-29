@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const BreweryDetail = () => {
-  const { id } = useParams(); // Get the id from the URL params
-  const [brewery, setBrewery] = useState(null); // State to hold brewery data
-  const [isLoading, setIsLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const { id } = useParams();
+  const [brewery, setBrewery] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // Fetch brewery data based on the id when component mounts
   useEffect(() => {
     const fetchBrewery = async () => {
       try {
@@ -31,6 +31,7 @@ const BreweryDetail = () => {
 
   return (
     <div>
+      <button onClick={() => navigate(-1)}>Back</button>
       <h2>{brewery.name}</h2>
       <p>Address: {brewery.street || "N/A"}</p>
       <p>City: {brewery.city}</p>
@@ -38,7 +39,16 @@ const BreweryDetail = () => {
       <p>Postal Code: {brewery.postal_code}</p>
       <p>Country: {brewery.country}</p>
       <p>Type: {brewery.brewery_type}</p>
-      <p>Website: {brewery.website_url ? <a href={brewery.website_url} target="_blank" rel="noopener noreferrer">{brewery.website_url}</a> : "N/A"}</p>
+      <p>
+        Website:{" "}
+        {brewery.website_url ? (
+          <a href={brewery.website_url} target="_blank" rel="noopener noreferrer">
+            {brewery.website_url}
+          </a>
+        ) : (
+          "N/A"
+        )}
+      </p>
       <p>Phone: {brewery.phone || "N/A"}</p>
     </div>
   );
