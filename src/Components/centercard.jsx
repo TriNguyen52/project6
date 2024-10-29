@@ -1,38 +1,59 @@
 import React, { useState, useEffect } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import { Link } from "react-router-dom";
-import "./centercard.css"; // Your CSS file for styling
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Sector } from "recharts";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "./centercard.css";
+
 const Centercard = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filterType, setFilterType] = useState("");
   const [filterCity, setFilterCity] = useState("");
+  const [showPieChart, setShowPieChart] = useState(false); // Toggle state for visualization
+  const [activeIndex, setActiveIndex] = useState(0); // For custom active shape
 
-  // Function to fetch breweries based on search input
+  // Load search parameters from URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setSearchInput(params.get("search") || "");
+    setFilterType(params.get("type") || "");
+    setFilterCity(params.get("city") || "");
+
+    if (params.get("search")) {
+      fetchBreweries(params.get("search"));
+    } else {
+      fetchBreweries("");
+    }
+  }, [location.search]);
+
+  // Fetch breweries based on search input
   const fetchBreweries = async (query) => {
     setIsLoading(true);
     const response = await fetch(
       `https://api.openbrewerydb.org/v1/breweries/search?query=${query}`
     );
     const data = await response.json();
-    setSearchResults(Array.isArray(data) ? data : []); // Ensure data is an array
+    setSearchResults(Array.isArray(data) ? data : []); 
     setIsLoading(false);
   };
 
-  // Fetch all breweries on component mount
-  useEffect(() => {
-    fetchBreweries("");
-  }, []);
-
-  // Function to handle search input change
-  const searchItems = (searchValue) => {
+  const updateSearch = (searchValue) => {
     setSearchInput(searchValue);
-    if (searchValue !== "") {
-      fetchBreweries(searchValue);
-    } else {
-      setSearchResults([]);
-    }
+    const params = new URLSearchParams(location.search);
+    params.set("search", searchValue);
+    navigate(`?${params.toString()}`);
+    fetchBreweries(searchValue);
+  };
+
+  const updateFilters = (type, city) => {
+    setFilterType(type);
+    setFilterCity(city);
+    const params = new URLSearchParams(location.search);
+    if (type) params.set("type", type); else params.delete("type");
+    if (city) params.set("city", city); else params.delete("city");
+    navigate(`?${params.toString()}`);
   };
 
   // Filter results based on type and city
@@ -53,7 +74,31 @@ const Centercard = () => {
   const chartData = Object.keys(breweryTypeData).map((type) => ({
     name: type,
     count: breweryTypeData[type],
+    percentage: ((breweryTypeData[type] / filteredResults.length) * 100).toFixed(2),
   }));
+
+  // Custom active shape for PieChart
+  const renderActiveShape = (props) => {
+    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percentage } = props;
+    return (
+      <g>
+      <text x={cx} y={cy} dy={2} textAnchor="middle" fill={fill}>
+        {payload.name}
+      </text>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + 5}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+      <text x={cx} y={cy} dy={25} textAnchor="middle" fill="#fff">{`Count: ${payload.count}`}</text>
+      <text x={cx} y={cy} dy={40} textAnchor="middle" fill="#fff">{`(${percentage}%)`}</text>
+      </g>
+    );
+  };
 
   return (
     <div className="centercard">
@@ -62,7 +107,6 @@ const Centercard = () => {
       </header>
 
       <div className="main-content">
-        {/* Main content section on the left */}
         <section className="card-section">
           <div className="stats-card">
             <h3>Total Breweries: {filteredResults.length}</h3>
@@ -76,14 +120,14 @@ const Centercard = () => {
             type="text"
             placeholder="Search for breweries..."
             value={searchInput}
-            onChange={(e) => searchItems(e.target.value)}
+            onChange={(e) => updateSearch(e.target.value)}
           />
 
           {/* Filters */}
           <div className="filters">
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              onChange={(e) => updateFilters(e.target.value, filterCity)}
             >
               <option value="">All Types</option>
               <option value="micro">Micro</option>
@@ -94,7 +138,7 @@ const Centercard = () => {
               type="text"
               placeholder="Filter by city..."
               value={filterCity}
-              onChange={(e) => setFilterCity(e.target.value)}
+              onChange={(e) => updateFilters(filterType, e.target.value)}
             />
           </div>
 
@@ -123,7 +167,7 @@ const Centercard = () => {
                     <td>{brewery.brewery_type}</td>
                     <td>{brewery.country}</td>
                     <td>
-                    <Link to={`/brewery/${brewery.id}`}>View Details</Link>
+                      <Link to={`/brewery/${brewery.id}${location.search}`}>View Details</Link>
                     </td>
                   </tr>
                 ))}
@@ -131,22 +175,42 @@ const Centercard = () => {
             </table>
           )}
 
-          {/* If no results */}
           {!isLoading && searchInput !== "" && filteredResults.length === 0 && (
             <p>No results found for "{searchInput}".</p>
           )}
         </section>
 
-        {/* Dashboard section with Recharts bar chart */}
+        {/* Toggle visualization section */}
         <aside className="dashboard-section">
           <h3>Brewery Types Distribution</h3>
-          <BarChart width={300} height={200} data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="count" fill="#8884d8" />
-          </BarChart>
+          <button onClick={() => setShowPieChart(!showPieChart)}>
+            Toggle to {showPieChart ? "Bar Chart" : "Pie Chart"}
+          </button>
+
+          {showPieChart ? (
+            <PieChart width={300} height={300}>
+              <Pie
+                activeIndex={activeIndex}
+                activeShape={renderActiveShape}
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="count"
+                onMouseEnter={(_, index) => setActiveIndex(index)}
+              />
+            </PieChart>
+          ) : (
+            <BarChart width={300} height={200} data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="count" fill="#8884d8" />
+            </BarChart>
+          )}
         </aside>
       </div>
     </div>
