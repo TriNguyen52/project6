@@ -1,0 +1,51 @@
+/* Container for the dashboard items */
+.Item {
+    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    padding: 20px;
+    border-radius: 10px;
+    color: #fff; /* White text */
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Slight shadow for a 3D effect */
+    transition: transform 0.3s ease; /* Animation for hovering */
+  }
+  
+  .Item:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+  }
+  
+  /* Title styling for the dashboard */
+  .Item h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    font-family: 'Orbitron', sans-serif; /* Space-themed font */
+  }
+  
+  /* List items styling */
+  .Item ul {
+    list-style: none; /* Remove bullet points */
+    padding: 0; /* Remove default padding */
+  }
+  
+  .Item ul li {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: color 0.3s ease; /* Smooth transition for color changes */
+  }
+  
+  /* Hover effect for list items */
+  .Item ul li:hover {
+    color: #ffd700; /* Golden color on hover */
+  }
+  
+  /* Responsive text wrapping for small screens */
+  @media screen and (max-width: 768px) {
+    .Item h1 {
+      font-size: 1.5em;
+    }
+  
+    .Item ul li {
+      font-size: 1.2em;
+    }
+  }
+  

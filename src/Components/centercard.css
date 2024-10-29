@@ -1,0 +1,83 @@
+/* Background and main container */
+.centercard {
+    background: url('your-space-background-image.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    display: flex; /* Use flexbox to position content */
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  /* Header styling */
+  .header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+  }
+  
+  /* Main content styling */
+  .main-content {
+    display: flex; /* Arrange content horizontally */
+    justify-content: space-between;
+    padding: 20px;
+    flex: 1;
+  }
+  
+  /* Main card section on the left */
+  .card-section {
+    width: 65%; /* Takes more space compared to the Dashboard */
+    padding-right: 20px;
+  }
+  
+  .stats-card {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .stats-card h3, .stats-card h4 {
+    margin: 10px 0;
+  }
+  
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+  
+  /* Astro Table */
+  .astro-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .astro-table th, .astro-table td {
+    padding: 10px;
+    border: 1px solid #fff;
+    text-align: left;
+  }
+  
+  .astro-table th {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  .astro-table td {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Dashboard section on the right */
+  .dashboard-section {
+    width: 30%; /* Less width for the Dashboard */
+    position: sticky; /* Make it sticky */
+    top: 20px; /* Distance from the top when scrolling */
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
