@@ -20,7 +20,7 @@ The following **required** functionality is completed:
 The following **optional** features are implemented:
 
 - [x] The site's customized dashboard contains more content that explains what is interesting about the data
-- [ ] The site allows users to toggle between different data visualizations
+- [x] The site allows users to toggle between different data visualizations
 
 The following **additional** features are implemented:
 
@@ -30,7 +30,10 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://cdn.loom.com/sessions/thumbnails/c2d3082695a944e6946551893f955734-dfc8b4ff01a8f929-full-play.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='<div>
+    <a href="https://cdn.loom.com/sessions/thumbnails/545d587a4d3c4446bf2236f14a003db3-674bfe20c4c037f1-full-play.gif">
+    </a>
+  </div>' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with ...  
